@@ -1,4 +1,11 @@
-CREATE OR REPLACE PACKAGE BODY APPS.XXVEN_AR_SALES_CANC_PKG AS
+--------------------------------------------------------
+--  Arquivo criado - Sexta-feira-Julho-10-2020   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Package Body XXVEN_AR_SALES_CANC_PKG
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "APPS"."XXVEN_AR_SALES_CANC_PKG" AS
   /* $Header: XXVEN_AR_SALES_CANC_PKG.pkb  1.1 2020/05/05 00:00:00 appldev ship $ */
   --
   -- +=================================================================+
@@ -73,7 +80,7 @@ CREATE OR REPLACE PACKAGE BODY APPS.XXVEN_AR_SALES_CANC_PKG AS
            )
         AND rcta.customer_trx_id         = NVL (  p_customer_trx_id, rcta.customer_trx_id  )
         AND prog.pedido_venda_programare = NVL (  p_pedido_programare, pedido_venda_programare  )
-        AND ROWNUM < 11 -- O concurrent sÃ³ executarÃ¡ 10 cancelamentos por vez, a pedido da Ã¡rea funcional.
+        AND ROWNUM < 11 -- O concurrent só executará 10 cancelamentos por vez, a pedido da área funcional.
      ORDER BY id_sequencial
    ;
    --
@@ -90,7 +97,7 @@ CREATE OR REPLACE PACKAGE BODY APPS.XXVEN_AR_SALES_CANC_PKG AS
    l_pedido                    VARCHAR2( 200 );
    l_processados_sucesso       NUMBER;
    --
-   
+
    PROCEDURE debug_log( p_message IN VARCHAR2 ) IS
    BEGIN
       --
@@ -311,7 +318,7 @@ CREATE OR REPLACE PACKAGE BODY APPS.XXVEN_AR_SALES_CANC_PKG AS
       ROLLBACK;
       --
    END atualiza_cab_lin_status;
-   
+
    PROCEDURE create_credit_memo
      (
          p_id_sequencial           IN NUMBER
@@ -348,6 +355,7 @@ CREATE OR REPLACE PACKAGE BODY APPS.XXVEN_AR_SALES_CANC_PKG AS
       l_cust_trx_line_id_frete        NUMBER;
       l_cust_trx_line_id_ajuste       NUMBER;
       l_trx_number                     ra_customer_trx_all.trx_number%TYPE;
+      lv_line_credit_flag             VARCHAR2(1) := 'N';  -- Doc ID 844939.1
       --
       e_error                     EXCEPTION;
       --
@@ -398,6 +406,12 @@ CREATE OR REPLACE PACKAGE BODY APPS.XXVEN_AR_SALES_CANC_PKG AS
               , ord ;
       --
    BEGIN
+     --
+     BEGIN
+       fnd_global.apps_initialize(fnd_global.user_id, fnd_global.resp_id, 222,0);
+       mo_global.init('AR');
+       mo_global.set_policy_context('S', fnd_global.org_id);
+     END;
      --
      l_msg_error     := NULL;
      x_return_status := fnd_api.g_ret_sts_success;
@@ -511,6 +525,7 @@ CREATE OR REPLACE PACKAGE BODY APPS.XXVEN_AR_SALES_CANC_PKG AS
                l_cm_lines_tbl(l_ind).customer_trx_line_id := l_cust_trx_line_id_frete;
                l_cm_lines_tbl(l_ind).quantity_credited    := -1;
                l_cm_lines_tbl(l_ind).price                := ROUND((lc_inv.quantidade * lc_inv.valor_frete), 2);
+               lv_line_credit_flag := 'Y';
                --
              END IF;
              --
@@ -587,11 +602,11 @@ CREATE OR REPLACE PACKAGE BODY APPS.XXVEN_AR_SALES_CANC_PKG AS
              , p_line_credit_flag             => 'Y'
              , p_cm_line_tbl                  => l_cm_lines_tbl
              , p_cm_reason_code               => 'CANCELLATION' -- 'RETURN'
-             , p_skip_workflow_flag           => 'Y'
+             , p_skip_workflow_flag           => lv_line_credit_flag
              , p_batch_source_name            => l_batch_name   -- 'DV_MANUAL'
              , p_interface_attribute_rec      => NULL
              , p_credit_method_installments   => NULL
-             , p_credit_method_rules          => NULL
+             , p_credit_method_rules          => 'UNIT' --NULL
              , x_return_status                => l_return_status
              , x_msg_count                    => l_msg_count
              , x_msg_data                     => l_msg_data
@@ -728,11 +743,11 @@ CREATE OR REPLACE PACKAGE BODY APPS.XXVEN_AR_SALES_CANC_PKG AS
       debug_log(x_msg_error);
    END print_output;
 
-   
+
   BEGIN
-  
+
      mo_global.set_policy_context( 'S', g_org_id  ); -- g_org_id:= 83;  --g_org_id );
-  
+
      debug_log( '  ' );
      debug_log( '  ' );
      debug_log( '***********************************************************' );
@@ -994,4 +1009,5 @@ CREATE OR REPLACE PACKAGE BODY APPS.XXVEN_AR_SALES_CANC_PKG AS
   END processa_cancelamento_p;
 
 END XXVEN_AR_SALES_CANC_PKG;
+
 /

@@ -1,4 +1,11 @@
-CREATE OR REPLACE PACKAGE APPS.XXVEN_AR_SALES_CANC_PKG AUTHID CURRENT_USER AS
+--------------------------------------------------------
+--  Arquivo criado - Sexta-feira-Julho-10-2020   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Package XXVEN_AR_SALES_CANC_PKG
+--------------------------------------------------------
+
+  CREATE OR REPLACE EDITIONABLE PACKAGE "APPS"."XXVEN_AR_SALES_CANC_PKG" AUTHID CURRENT_USER AS
   /* $Header: XXVEN_AR_SALES_CANC_PKG.pks  1.1 2020/05/05 00:00:00 appldev ship $ */
   --
   -- +=================================================================+
@@ -23,8 +30,8 @@ CREATE OR REPLACE PACKAGE APPS.XXVEN_AR_SALES_CANC_PKG AUTHID CURRENT_USER AS
   -- | UPDATED BY                                                      |
   -- |                                                                 |
   -- +=================================================================+
-  
-  
+
+
   -- Global Variable
   g_resp_id              NUMBER      := TO_NUMBER(  fnd_profile.value(  'RESP_ID'  )  );
   g_conc_request_id      NUMBER      := fnd_global.conc_request_id;
@@ -38,7 +45,7 @@ CREATE OR REPLACE PACKAGE APPS.XXVEN_AR_SALES_CANC_PKG AUTHID CURRENT_USER AS
   g_ret_sts_success      VARCHAR2( 1 ) := fnd_api.g_ret_sts_success;
   g_ret_sts_error        VARCHAR2( 1 ) := fnd_api.g_ret_sts_error;
   g_ret_sts_unexp_error  VARCHAR2( 1 ) := fnd_api.g_ret_sts_unexp_error;
-  
+
   TYPE rec_transactions IS RECORD
     ( 
         id_sequencial             NUMBER
@@ -55,7 +62,7 @@ CREATE OR REPLACE PACKAGE APPS.XXVEN_AR_SALES_CANC_PKG AUTHID CURRENT_USER AS
     )
   ;
   TYPE tab_transactions IS TABLE OF rec_transactions INDEX BY BINARY_INTEGER;
-  
+
   PROCEDURE processa_cancelamento_p
     ( 
         errbuf              OUT VARCHAR2
@@ -67,4 +74,5 @@ CREATE OR REPLACE PACKAGE APPS.XXVEN_AR_SALES_CANC_PKG AUTHID CURRENT_USER AS
   ;
 
 END XXVEN_AR_SALES_CANC_PKG;
+
 /

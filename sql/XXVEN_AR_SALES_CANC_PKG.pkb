@@ -5,7 +5,7 @@
 --  DDL for Package Body XXVEN_AR_SALES_CANC_PKG
 --------------------------------------------------------
 
-  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "APPS"."XXVEN_AR_SALES_CANC_PKG" AS
+CREATE OR REPLACE PACKAGE BODY      XXVEN_AR_SALES_CANC_PKG AS
   /* $Header: XXVEN_AR_SALES_CANC_PKG.pkb  1.1 2020/05/05 00:00:00 appldev ship $ */
   --
   -- +=================================================================+
@@ -602,11 +602,11 @@
              , p_line_credit_flag             => 'Y'
              , p_cm_line_tbl                  => l_cm_lines_tbl
              , p_cm_reason_code               => 'CANCELLATION' -- 'RETURN'
-             , p_skip_workflow_flag           => lv_line_credit_flag
+             , p_skip_workflow_flag           => 'Y' --lv_line_credit_flag
              , p_batch_source_name            => l_batch_name   -- 'DV_MANUAL'
              , p_interface_attribute_rec      => NULL
              , p_credit_method_installments   => NULL
-             , p_credit_method_rules          => 'UNIT' --NULL
+             , p_credit_method_rules          => NULL -- 'UNIT' --NULL
              , x_return_status                => l_return_status
              , x_msg_count                    => l_msg_count
              , x_msg_data                     => l_msg_data
@@ -1009,5 +1009,4 @@
   END processa_cancelamento_p;
 
 END XXVEN_AR_SALES_CANC_PKG;
-
 /

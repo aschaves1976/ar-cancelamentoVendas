@@ -244,11 +244,13 @@ CREATE OR REPLACE PACKAGE BODY      XXVEN_AR_SALES_CANC_PKG AS
    BEGIN
      --
      l_mens_erro :='ERRO: AO ALTERAR TABELA TB_PROG_EBS_PED_VENDA_CAB';
-     UPDATE   tb_prog_ebs_ped_venda_cab@intprd
-       SET
-              status_integracao = DECODE( p_atualiza_status, 40, 41, p_atualiza_status )
+   UPDATE tb_prog_ebs_ped_venda_cab@intprd
+      SET
+          -- status_integracao = DECODE(p_atualiza_status, 40, 41, p_atualiza_status)
+              status_integracao    = p_atualiza_status
             , data_integracao   = SYSDATE
             , envio_erro        = TRIM( p_message )
+            , codigo_pedido_oracle = p_pedido_venda_programare
      WHERE 1=1
        AND id_sequencial           = p_id_sequencial
        AND pedido_venda_programare = p_pedido_venda_programare
